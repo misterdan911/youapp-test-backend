@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
-import { ApiBearerAuth, ApiCreatedResponse, ApiHeader, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('User')
@@ -9,8 +9,6 @@ import { AuthGuard } from 'src/auth/auth.guard';
   name: 'x-access-token',
   description: 'Access token',
 })
-// @ApiBearerAuth()
-// @ApiBearerAuth('defaultBearerAuth')
 @Controller()
 export class UserController {
 
@@ -18,7 +16,6 @@ export class UserController {
 
   @ApiCreatedResponse({
     description: 'Profile has been created',
-    // type: 'haha',
   })
   @UseGuards(AuthGuard)
   @Post('createProfile')
