@@ -2,24 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { RegisterUserDto } from 'src/user/dto/register-user.dto';
 import { UserService } from 'src/user/user.service';
 
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserDto } from 'src/user/dto/login-user.dto';
+import LoginResult from './custom.type';
 
 @Injectable()
 export class AuthService {
 
-  private jwtOptions: {};
-
-  constructor(private readonly jwtService: JwtService) {
-
-    this.jwtOptions = {
-      secret: 'secretKey',
-      // verify: { algorithms: ['HS256'] }
-    };
-
-  }
+  constructor(private readonly jwtService: JwtService) { }
 
   @Inject(UserService)
   private readonly userService: UserService;
@@ -31,20 +21,27 @@ export class AuthService {
 
   async login(loginUserDto: LoginUserDto) {
 
-    const result = await this.userService.checkUserLogin(loginUserDto);
-    // console.log('result:', result);
+    let loginResult: LoginResult = {
+      status: 'failed',
+      access_token: ''
+    };
 
-    if (!result) {
-      return false;
+    const result = await this.userService.checkUserLogin(loginUserDto);
+
+    if (!result.status) {
+      loginResult.status = 'failed';
+      return loginResult;
     }
 
     const payload = {
       username: loginUserDto.username,
-      // sub: user._id
+      sub: result.user._id
     };
 
-    let access_token = this.jwtService.sign(payload, this.jwtOptions)
-    return access_token;
+    loginResult.status = 'success';
+    loginResult.access_token = await this.jwtService.signAsync(payload);
+
+    return loginResult;
   }
 
   validate(payload) {

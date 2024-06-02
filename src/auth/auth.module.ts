@@ -9,10 +9,18 @@ import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
+    /*
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: 'secret',
-      signOptions: { expiresIn: '60s' }
+      signOptions: { expiresIn: '3600s' }
+    }),
+    */
+    PassportModule,
+    JwtModule.register({
+      global: true,
+      secret: 'secret',
+      signOptions: { expiresIn: '3600s' },
     }),
     UserModule
   ],

@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { Model } from 'mongoose';
 import { LoginUserDto } from './dto/login-user.dto';
 import { PasswordService } from './password.service';
-
+import { CreateProfileDto } from './dto/create-profile.dto';
+import CheckLoginResult from './custom.type';
 
 @Injectable()
 export class UserService {
@@ -28,44 +27,43 @@ export class UserService {
     return user;
   }
 
-  async checkUserLogin(loginUserDto: LoginUserDto) {
+  async checkUserLogin(loginUserDto: LoginUserDto): Promise<CheckLoginResult> {
+
+    let loginResult: CheckLoginResult = {
+      status: 'failed',
+      user: {},
+    };
+    
     let user = await this.userModel.findOne({ username: loginUserDto.username });
 
     if (!user) {
       user = await this.userModel.findOne({ email: loginUserDto.email });
-      if (!user) { return false; }
+
+      if (!user) {
+        loginResult.status = 'failed';
+        return loginResult;
+      }
     }
 
     // console.log('user:', user);
 
-    let result = await this.passwordService.comparePassword(loginUserDto.password, user.password);
+    let passwordMatch = await this.passwordService.comparePassword(loginUserDto.password, user.password);
     // console.log('result:', result);
 
-    if (!result) { return false; }
+    if (!passwordMatch) {
+      loginResult.status = 'failed';
+      return loginResult;
+    }
 
-    return true;
+    loginResult.status = 'success';
+    loginResult.user = user;
+
+    return loginResult;
   }
 
-
-  /*
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async createProfile(createProfileDto: CreateProfileDto) {
+    // throw new Error('Method not implemented.');
+    // userModel.updateOne
   }
 
-  findAll() {
-    return `This action returns all user`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
-  */
 }

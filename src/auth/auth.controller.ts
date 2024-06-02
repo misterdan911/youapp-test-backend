@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { RegisterUserDto } from 'src/user/dto/register-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from 'src/user/dto/login-user.dto';
-import { resourceLimits } from 'worker_threads';
+import LoginResult from './custom.type';
 
 @ApiTags('Auth')
 @Controller()
@@ -19,21 +19,18 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto) {
-    let accessToken = await this.authService.login(loginUserDto);
 
-    console.log('accessToken:', accessToken)
+    let loginResult: LoginResult = await this.authService.login(loginUserDto);
 
-    if (!accessToken) {
+    if (loginResult.status == 'failed') {
       return {
-        "message": "User not found"
+        message: "User not found"
       }
     }
 
-    // console.log('accessToken:', accessToken);
-
     return {
-      "message": "User has been logged in successfully",
-      "access_token": accessToken
+      message: "User has been logged in successfully",
+      access_token: loginResult.access_token
     };
   }
 

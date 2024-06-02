@@ -1,38 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { CreateProfileDto } from './dto/create-profile.dto';
+import { ApiBearerAuth, ApiCreatedResponse, ApiHeader, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
-@ApiTags('Auth')
+@ApiTags('User')
+@ApiHeader({
+  name: 'x-access-token',
+  description: 'Access token',
+})
+// @ApiBearerAuth()
+// @ApiBearerAuth('defaultBearerAuth')
 @Controller()
 export class UserController {
-  constructor(private readonly userService: UserService) {}
 
-  /*
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  constructor(private readonly userService: UserService) { }
+
+  @ApiCreatedResponse({
+    description: 'Profile has been created',
+    // type: 'haha',
+  })
+  @UseGuards(AuthGuard)
+  @Post('createProfile')
+  async createProfile(@Request() req, @Body() createProfileDto: CreateProfileDto) {
+    console.log('req:', req.user);
+    // let result = await this.userService.createProfile(createProfileDto);
+    return { message: "Hello" };
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
-  */
 }
