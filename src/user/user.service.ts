@@ -5,15 +5,18 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { Model } from 'mongoose';
 import { LoginUserDto } from './dto/login-user.dto';
 import { PasswordService } from './password.service';
-// import { CreateProfileDto } from './dto/create-profile.dto';
+import { CreateProfileDto } from './dto/create-profile.dto';
 import CheckLoginResult from './custom.type';
+import { ZodiacService } from './zodiac.service';
 
 @Injectable()
 export class UserService {
+  
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>,
     private readonly passwordService: PasswordService,
-  ) {}
+    private readonly zodiacService: ZodiacService,
+  ) { }
 
   async register(registerUserDto: RegisterUserDto) {
     registerUserDto.password = await this.passwordService.hashPassword(
@@ -47,13 +50,11 @@ export class UserService {
       }
     }
 
-    // console.log('user:', user);
 
     const passwordMatch = await this.passwordService.comparePassword(
       loginUserDto.password,
       user.password,
     );
-    // console.log('result:', result);
 
     if (!passwordMatch) {
       loginResult.status = 'failed';
@@ -66,10 +67,28 @@ export class UserService {
     return loginResult;
   }
 
-  /*
-  async createProfile(createProfileDto: CreateProfileDto) {
-    // throw new Error('Method not implemented.');
-    // userModel.updateOne
+  async createProfile(userId: string, createProfileDto: CreateProfileDto) {
+
+    createProfileDto.horoscope = this.zodiacService.getHoroscope(createProfileDto.birthday);
+    createProfileDto.zodiac = this.zodiacService.convertDateToShio(createProfileDto.birthday);
+    let result = await this.userModel.updateOne({ _id: userId }, createProfileDto);
+
+    if (result.acknowledged) {
+      let user = await this.userModel.findOne({ _id: userId }).select(['-password', '-_id', '-__v']);
+      return { status: 'success', user: user };
+    } else {
+      return { status: 'failed', user: {} };
+    }
   }
-  */
+
+  async getProfile(userId: string) {
+    let user = await this.userModel.findOne({ _id: userId }).select(['-password', '-_id', '-__v']);
+
+    if (user) {
+      return { status: 'success', user: user };
+    } else {
+      return { status: 'failed', user: {} };
+    }
+  }
+
 }

@@ -23,13 +23,19 @@ export class User {
   birthday: string;
 
   @Prop()
+  horoscope: string;
+
+  @Prop()
+  zodiac: string;
+
+  @Prop()
   height: number;
 
   @Prop()
   weight: number;
 
   @Prop()
-  interest: Array<string>;
+  interests: Array<string>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

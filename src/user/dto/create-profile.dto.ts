@@ -8,6 +8,12 @@ export class CreateProfileDto {
   birthday: string;
 
   @ApiProperty()
+  horoscope: string;
+
+  @ApiProperty()
+  zodiac: string;
+
+  @ApiProperty()
   height: string;
 
   @ApiProperty()
