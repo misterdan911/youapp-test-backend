@@ -1,20 +1,18 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateProfileDto {
+  @ApiProperty()
+  name: string;
 
   @ApiProperty()
-  name: string
+  birthday: string;
 
   @ApiProperty()
-  birthday: string
+  height: string;
 
   @ApiProperty()
-  height: string
+  weight: string;
 
   @ApiProperty()
-  weight: string
-
-  @ApiProperty()
-  interests: Array<string>
-
+  interests: Array<string>;
 }

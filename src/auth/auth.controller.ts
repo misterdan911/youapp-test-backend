@@ -8,30 +8,27 @@ import LoginResult from './custom.type';
 @ApiTags('Auth')
 @Controller()
 export class AuthController {
-
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Post('register')
   register(@Body() registerUserDto: RegisterUserDto) {
     this.authService.register(registerUserDto);
-    return { "message": "User has been created successfully" };
+    return { message: 'User has been created successfully' };
   }
 
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto) {
-
-    let loginResult: LoginResult = await this.authService.login(loginUserDto);
+    const loginResult: LoginResult = await this.authService.login(loginUserDto);
 
     if (loginResult.status == 'failed') {
       return {
-        message: "User not found"
-      }
+        message: 'User not found',
+      };
     }
 
     return {
-      message: "User has been logged in successfully",
-      access_token: loginResult.access_token
+      message: 'User has been logged in successfully',
+      access_token: loginResult.access_token,
     };
   }
-
 }

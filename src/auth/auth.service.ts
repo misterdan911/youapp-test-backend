@@ -8,8 +8,7 @@ import LoginResult from './custom.type';
 
 @Injectable()
 export class AuthService {
-
-  constructor(private readonly jwtService: JwtService) { }
+  constructor(private readonly jwtService: JwtService) {}
 
   @Inject(UserService)
   private readonly userService: UserService;
@@ -20,10 +19,9 @@ export class AuthService {
   }
 
   async login(loginUserDto: LoginUserDto) {
-
-    let loginResult: LoginResult = {
+    const loginResult: LoginResult = {
       status: 'failed',
-      access_token: ''
+      access_token: '',
     };
 
     const result = await this.userService.checkUserLogin(loginUserDto);
@@ -35,7 +33,7 @@ export class AuthService {
 
     const payload = {
       username: loginUserDto.username,
-      sub: result.user._id
+      sub: result.user._id,
     };
 
     loginResult.status = 'success';

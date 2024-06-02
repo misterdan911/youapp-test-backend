@@ -11,7 +11,7 @@ import { PassportModule } from '@nestjs/passport';
     MongooseModule.forRoot('mongodb://localhost/youapp_interview_test'),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     AuthModule,
-    UserModule
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
