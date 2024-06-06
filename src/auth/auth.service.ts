@@ -19,6 +19,7 @@ export class AuthService {
   }
 
   async login(loginUserDto: LoginUserDto) {
+    
     const loginResult: LoginResult = {
       status: 'failed',
       access_token: '',
@@ -26,7 +27,7 @@ export class AuthService {
 
     const result = await this.userService.checkUserLogin(loginUserDto);
 
-    if (!result.status) {
+    if (result.status == 'failed') {
       loginResult.status = 'failed';
       return loginResult;
     }

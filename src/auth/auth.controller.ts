@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from 'src/user/dto/register-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from 'src/user/dto/login-user.dto';
 import LoginResult from './custom.type';
 
@@ -11,6 +11,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @ApiCreatedResponse({ description: 'User has been created successfully'})
   register(@Body() registerUserDto: RegisterUserDto) {
     this.authService.register(registerUserDto);
     return { message: 'User has been created successfully' };

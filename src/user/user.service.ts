@@ -11,7 +11,7 @@ import { ZodiacService } from './zodiac.service';
 
 @Injectable()
 export class UserService {
-  
+
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>,
     private readonly passwordService: PasswordService,
@@ -28,6 +28,11 @@ export class UserService {
 
   async getUserByUsername(userName: string) {
     const user = await this.userModel.findOne({ username: userName });
+    return user;
+  }
+
+  async getUserByEmail(email: string) {
+    const user = await this.userModel.findOne({ email: email });
     return user;
   }
 

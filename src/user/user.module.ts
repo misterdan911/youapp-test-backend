@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './schemas/user.schema';
-import { UsernameMustBeUnique } from './user.custom.validation';
+import { UsernameMustBeUnique, EmailMustBeUnique } from './user.custom.validation';
 import { PasswordService } from './password.service';
 import { ZodiacService } from './zodiac.service';
 
@@ -13,6 +13,7 @@ import { ZodiacService } from './zodiac.service';
   providers: [
     UserService,
     UsernameMustBeUnique,
+    EmailMustBeUnique,
     PasswordService,
     ZodiacService
   ],
